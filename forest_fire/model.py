@@ -106,10 +106,10 @@ class ForestFire(Model):
             now = str(datetime.now()).replace(":", "-")
 
             model_table = self.model_datacollector.get_model_vars_dataframe()
-            model_table.to_csv("csv"+ sep + "model_data dens=" + str(self.density) + " log=" + str(self.log_strength) + " fire=" + str(self.fire_power) +" " + now + ".csv")
+            model_table.to_csv("spreadsheets"+ sep + "model_data dens=" + str(self.density) + " log=" + str(self.log_strength) + " fire=" + str(self.fire_power) +" " + now + ".csv")
             
             agent_table = self.agent_datacollector.get_model_vars_dataframe()
-            agent_table.to_csv("csv"+ sep + "agent_data dens=" + str(self.density) + " log=" + str(self.log_strength) + " fire=" + str(self.fire_power) +" " + now + ".csv")
+            agent_table.to_csv("spreadsheets"+ sep + "agent_data dens=" + str(self.density) + " log=" + str(self.log_strength) + " fire=" + str(self.fire_power) +" " + now + ".csv")
 
     @staticmethod
     def count_type(model, tree_condition):

@@ -39,6 +39,9 @@ Abaixo do grid, temos alguns gráficos:
 - Número de clusters (ilhas) na floresta.
  
 ## Arquivos CSV
+
+A cada execução finalizada do simulador, é gerado dois arquivos `.csv` contendo os seguintes dados:
+
 - `Model_data`: Contém os dados de árvores vivas, árvores mortas, árvores em chamas e número de clusters
 - `Agent_data`: Possui a quantidade de cada árvore na florestas, sendo elas:
 (Ordem das menos resistente para as mais resistentes)
