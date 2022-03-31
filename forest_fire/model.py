@@ -4,9 +4,11 @@ from mesa.space import Grid
 from mesa.time import RandomActivation
 from datetime import datetime
 from os import sep
+from mesa.batchrunner import BatchRunner
 
 from .agent import TreeCell, TiposMadeira
 from scipy.ndimage import measurements
+from .auxiliar import get_cluster_numbers, tree_type
 
 class ForestFire(Model):
     """
@@ -103,13 +105,13 @@ class ForestFire(Model):
         # Halt if no more fire
         if self.count_type(self, "On Fire") == 0:
             self.running = False
-            now = str(datetime.now()).replace(":", "-")
+            # now = str(datetime.now()).replace(":", "-")
 
-            model_table = self.model_datacollector.get_model_vars_dataframe()
-            model_table.to_csv("spreadsheets"+ sep + "model_data dens=" + str(self.density) + " log=" + str(self.log_strength) + " fire=" + str(self.fire_power) +" " + now + ".csv")
+            # model_table = self.model_datacollector.get_model_vars_dataframe()
+            # model_table.to_csv("spreadsheets"+ sep + "model_data dens=" + str(self.density) + " log=" + str(self.log_strength) + " fire=" + str(self.fire_power) +" " + now + ".csv")
             
-            agent_table = self.agent_datacollector.get_model_vars_dataframe()
-            agent_table.to_csv("spreadsheets"+ sep + "agent_data dens=" + str(self.density) + " log=" + str(self.log_strength) + " fire=" + str(self.fire_power) +" " + now + ".csv")
+            # agent_table = self.agent_datacollector.get_model_vars_dataframe()
+            # agent_table.to_csv("spreadsheets"+ sep + "agent_data dens=" + str(self.density) + " log=" + str(self.log_strength) + " fire=" + str(self.fire_power) +" " + now + ".csv")
 
     @staticmethod
     def count_type(model, tree_condition):
@@ -150,3 +152,34 @@ class ForestFire(Model):
         _, num = measurements.label(grid_aux)
         return num
 
+def batch_run():
+    fixed_params = {
+        'density': 0.90,
+        'fire_power': 50
+    }
+    variable_params = {
+        'log_strength': [30, 50, 80]
+    }
+    experiments_per_parameter_configuration = 200
+
+    batch_run = BatchRunner(
+        ForestFire,
+        variable_params,
+        fixed_params,
+        iterations=experiments_per_parameter_configuration,
+        model_reporters = {
+            "Clusters": get_cluster_numbers
+        },
+        # agent_reporters = {
+        #     "tree_type": "tree_type"
+        # }
+    )
+    batch_run.run_all()
+
+    run_model_data = batch_run.get_model_vars_dataframe()
+    # run_agent_data = batch_run.get_agent_vars_dataframe()
+
+    now = str(datetime.now()).replace(":", "-")
+
+    run_model_data.to_csv('spreadsheets_info'+sep+'model_data'+'-'+now+'.csv')
+    # run_agent_data.to_csv('spreadsheets_info'+sep+'agent_data'+'-'+now+'.csv')
